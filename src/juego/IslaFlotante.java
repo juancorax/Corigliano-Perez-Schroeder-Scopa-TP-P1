@@ -31,7 +31,7 @@ public class IslaFlotante {
     }
 
     public void dibujar(Entorno entorno) {
-        entorno.dibujarRectangulo(this.x, this.y, this.ancho, this.alto, 0, Color.GREEN);
+        entorno.dibujarRectangulo(this.x, this.y, this.ancho, this.alto, 0, new Color(34, 139, 34));
     }
 
     public int getX() {

@@ -1,5 +1,6 @@
 package juego;
 
+import java.awt.Color;
 import entorno.Entorno;
 import entorno.InterfaceJuego;
 
@@ -20,6 +21,9 @@ public class Juego extends InterfaceJuego {
 
 		// Inicializar lo que haga falta para el juego
 		// (agregar todo debajo de este punto)
+
+		// Color del fondo
+		this.entorno.colorFondo(new Color(173, 216, 230));
 
 		// Calcula el ancho y alto de cada isla flotante dependiendo de la resolucion
 		IslaFlotante.setVariablesDeClase(anchoDeResolucion / 6, altoDeResolucion / 20);
