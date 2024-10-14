@@ -10,13 +10,20 @@ public class Juego extends InterfaceJuego {
 	private Entorno entorno;
 
 	// Variables y métodos propios de cada grupo
-	private Pep pep;
+
+	// Variables para cada clase
 	private IslaFlotante[] islasFlotantes;
+	private Pep pep;
+	private Disparo disparo;
 
 	// Resolucion del juego
 	private int anchoDeResolucion = 1280;
-
 	private int altoDeResolucion = 720;
+
+	// Variables para determinar el movimiento
+	// y duracion del disparo
+	private int xDePepCuandoDisparo;
+	private boolean pepMirabaALaDerechaCuandoDisparo;
 
 	Juego() {
 		// Instancia el objeto entorno
@@ -83,7 +90,41 @@ public class Juego extends InterfaceJuego {
 			// Dibuja a Pep
 			this.pep.dibujar(this.entorno);
 
-			detectarPulsadoDeTeclas();
+			detectarMovimientosDePep();
+
+			// Se crea un disparo si actualmente no hay uno
+			// y se presiona la tecla/boton correspondiente
+			if (this.disparo == null
+					&& (this.entorno.sePresiono('c') || this.entorno.sePresionoBoton(this.entorno.BOTON_IZQUIERDO))) {
+				this.disparo = new Disparo(this.pep.getX(), this.pep.getY(), this.pep.getAncho() / 4, 5);
+
+				// Si Pep disparo, se guardan la posicion y direccion
+				if (this.disparo != null) {
+					this.xDePepCuandoDisparo = this.pep.getX();
+					this.pepMirabaALaDerechaCuandoDisparo = this.pep.getMiraAlaDerecha();
+				}
+			}
+
+			// Si el disparo existe, lo dibuja
+			if (this.disparo != null) {
+				this.disparo.dibujar(this.entorno);
+
+				// Mueve el disparo dependiendo de la direccion
+				// a la cual Pep miraba
+				if (this.pepMirabaALaDerechaCuandoDisparo) {
+					this.disparo.moverALaDerecha();
+				} else {
+					this.disparo.moverALaIzquierda();
+				}
+
+				// Condiciones para que el disparo desaparezca
+				if (this.disparo.getX() <= 0
+						|| this.disparo.getX() >= this.anchoDeResolucion
+						|| this.disparo.getX() > this.xDePepCuandoDisparo + (anchoDeResolucion / 6)
+						|| this.disparo.getX() < this.xDePepCuandoDisparo - (anchoDeResolucion / 6)) {
+					this.disparo = null;
+				}
+			}
 
 			// Aplica gravedad a menos que haya colision
 			this.pep.aplicarGravedad();
@@ -98,21 +139,24 @@ public class Juego extends InterfaceJuego {
 		}
 	}
 
-	public void detectarPulsadoDeTeclas() {
+	public void detectarMovimientosDePep() {
 		// Movimiento hacia la derecha
-		boolean sePresionoLaTeclaDerecha = this.entorno.estaPresionada(this.entorno.TECLA_DERECHA);
+		boolean sePresionoLaTeclaDerecha = this.entorno.estaPresionada(this.entorno.TECLA_DERECHA)
+				|| this.entorno.estaPresionada('d');
 		if (sePresionoLaTeclaDerecha) {
 			this.pep.moverDerecha();
 		}
 
 		// Movimiento hacia la izquierda
-		boolean sePresionoLaTeclaIzquierda = this.entorno.estaPresionada(this.entorno.TECLA_IZQUIERDA);
+		boolean sePresionoLaTeclaIzquierda = this.entorno.estaPresionada(this.entorno.TECLA_IZQUIERDA)
+				|| this.entorno.estaPresionada('a');
 		if (sePresionoLaTeclaIzquierda) {
 			this.pep.moverIzquierda();
 		}
 
 		// Salto
-		boolean sePresionoLaTeclaArriba = this.entorno.estaPresionada(this.entorno.TECLA_ARRIBA);
+		boolean sePresionoLaTeclaArriba = this.entorno.estaPresionada(this.entorno.TECLA_ARRIBA)
+				|| this.entorno.estaPresionada('w');
 		if (sePresionoLaTeclaArriba) {
 			this.pep.saltar();
 		}
