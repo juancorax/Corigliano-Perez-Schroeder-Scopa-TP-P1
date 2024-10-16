@@ -15,6 +15,7 @@ public class Juego extends InterfaceJuego {
 	private IslaFlotante[] islasFlotantes;
 	private Pep pep;
 	private Disparo disparo;
+	private Gnomo [] gnomos;
 
 	// Resolucion del juego
 	private int anchoDeResolucion = 1280;
@@ -63,6 +64,10 @@ public class Juego extends InterfaceJuego {
 		this.pep = new Pep(centroX, (separacionVertical * 5) - (this.altoDeResolucion / 20), altoDeResolucion / 20,
 				this.altoDeResolucion / 20, 3);
 
+		this.gnomos = new Gnomo[3];
+		for (int i = 0; i < gnomos.length; i++) {
+			gnomos[i] = new Gnomo(anchoDeResolucion / 2, 0, 25, 25, 2); 
+		}
 		// Inicia el juego!
 		this.entorno.iniciar();
 	}
@@ -137,6 +142,34 @@ public class Juego extends InterfaceJuego {
 				this.islasFlotantes = null;
 			}
 		}
+		
+		for (int i = 0; i < gnomos.length; i++) {
+	        if (gnomos[i] == null) {
+	            // Crear un nuevo gnomo si el actual es null
+	            gnomos[i] = new Gnomo(anchoDeResolucion / 2, 0, 25, 25, 2);
+	            continue; // Saltar a la siguiente iteración después de crear el nuevo gnomo
+	        }
+	        
+	        // Movimiento de los gnomos
+	        gnomos[i].moverHaciaCentro(anchoDeResolucion);
+	        gnomos[i].aplicarGravedad();
+	        gnomos[i].dibujar(this.entorno);
+
+	        // Verificar si el gnomo ha sido salvado por Pep
+	        if (gnomos[i].estaCercaDePep(this.pep)) {
+	            gnomos[i] = null; // Gnomo salvado, eliminarlo del juego
+	            continue; // Saltar a la siguiente iteración para evitar otros métodos en este ciclo
+	        }
+
+	        // Verificar si el gnomo ha caído al vacío
+	        if (gnomos[i].getY() > altoDeResolucion) {
+	            gnomos[i] = null; // Eliminar gnomo caído
+	            continue; // Saltar a la siguiente iteración para evitar otros métodos en este ciclo
+	        }
+
+	        // Verifica colisión con islas solo si el gnomo no es null
+	        gnomos[i].colisionConIslas(this.islasFlotantes);
+	    }
 	}
 
 	public void detectarMovimientosDePep() {
