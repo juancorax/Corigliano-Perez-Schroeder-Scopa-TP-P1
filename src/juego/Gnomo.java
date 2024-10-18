@@ -3,9 +3,10 @@ package juego;
 import java.awt.Color;
 
 import entorno.Entorno;
+
 public class Gnomo extends Personaje {
-    
-	int velocidad = 1;
+
+    int velocidad = 1;
     private boolean salvado = false;
     private int direccionX; // -1 para izquierda, 1 para derecha
 
@@ -17,7 +18,7 @@ public class Gnomo extends Personaje {
     public boolean estaSalvado() {
         return salvado;
     }
-    
+
     public void moverHaciaCentro(int centroX) {
         // Cambia aleatoriamente la dirección lateral
         if (Math.random() < 0.01) { // Cambia de dirección con un 1% de probabilidad
@@ -38,7 +39,7 @@ public class Gnomo extends Personaje {
             x = 1280;
         }
     }
-    
+
     public void caer() {
         this.aplicarGravedad();
     }
@@ -55,7 +56,7 @@ public class Gnomo extends Personaje {
         int gnomoAbajo = this.y + this.alto / 2;
 
         return gnomoDerecha > pepIzquierda && gnomoIzquierda < pepDerecha &&
-               gnomoAbajo > pepArriba && gnomoArriba < pepAbajo;
+                gnomoAbajo > pepArriba && gnomoArriba < pepAbajo;
     }
 
     public void dibujar(Entorno entorno) {
@@ -64,5 +65,3 @@ public class Gnomo extends Personaje {
         }
     }
 }
-
-

@@ -12,10 +12,11 @@ public class Juego extends InterfaceJuego {
 	// Variables y métodos propios de cada grupo
 
 	// Variables para cada clase
+	private EstadoDelJuego estadoDelJuego;
 	private IslaFlotante[] islasFlotantes;
 	private Pep pep;
 	private Disparo disparo;
-	private Gnomo [] gnomos;
+	private Gnomo[] gnomos;
 
 	// Resolucion del juego
 	private int anchoDeResolucion = 1280;
@@ -43,6 +44,9 @@ public class Juego extends InterfaceJuego {
 		// Color del fondo
 		this.entorno.colorFondo(new Color(173, 216, 230));
 
+		// Instanciacion del estado del juego
+		this.estadoDelJuego = new EstadoDelJuego();
+
 		// Calcula el ancho y alto de cada isla flotante dependiendo de la resolucion
 		IslaFlotante.setVariablesDeClase(anchoDeResolucion / 6, this.altoDeResolucion / 20);
 
@@ -60,14 +64,16 @@ public class Juego extends InterfaceJuego {
 		this.islasFlotantes[7] = new IslaFlotante(centroX + separacionHorizontal, separacionVertical * 4);
 		this.islasFlotantes[8] = new IslaFlotante(centroX, separacionVertical * 5);
 
+		// Instanciacion de los Gnomos
+		this.gnomos = new Gnomo[3];
+		for (int i = 0; i < gnomos.length; i++) {
+			gnomos[i] = new Gnomo(anchoDeResolucion / 2, 0, 25, 25, 2);
+		}
+
 		// Instanciacion de Pep
 		this.pep = new Pep(centroX, (separacionVertical * 5) - (this.altoDeResolucion / 20), altoDeResolucion / 20,
 				this.altoDeResolucion / 20, 3);
 
-		this.gnomos = new Gnomo[3];
-		for (int i = 0; i < gnomos.length; i++) {
-			gnomos[i] = new Gnomo(anchoDeResolucion / 2, 0, 25, 25, 2); 
-		}
 		// Inicia el juego!
 		this.entorno.iniciar();
 	}
@@ -80,6 +86,9 @@ public class Juego extends InterfaceJuego {
 	 */
 	public void tick() {
 		// Procesamiento de un instante de tiempo
+
+		// Muestra en pantalla el estado del juego
+		this.estadoDelJuego.mostrarEnPantalla(this.entorno, anchoDeResolucion, altoDeResolucion);
 
 		// Comprueba si las islas existen
 		// y dibuja cada isla en pantalla
@@ -140,36 +149,48 @@ public class Juego extends InterfaceJuego {
 			if (this.pep.getY() - (this.pep.getAlto() / 2) > this.altoDeResolucion) {
 				this.pep = null;
 				this.islasFlotantes = null;
+				this.gnomos = null;
 			}
 		}
-		
-		for (int i = 0; i < gnomos.length; i++) {
-	        if (gnomos[i] == null) {
-	            // Crear un nuevo gnomo si el actual es null
-	            gnomos[i] = new Gnomo(anchoDeResolucion / 2, 0, 25, 25, 2);
-	            continue; // Saltar a la siguiente iteración después de crear el nuevo gnomo
-	        }
-	        
-	        // Movimiento de los gnomos
-	        gnomos[i].moverHaciaCentro(anchoDeResolucion);
-	        gnomos[i].aplicarGravedad();
-	        gnomos[i].dibujar(this.entorno);
 
-	        // Verificar si el gnomo ha sido salvado por Pep
-	        if (gnomos[i].estaCercaDePep(this.pep)) {
-	            gnomos[i] = null; // Gnomo salvado, eliminarlo del juego
-	            continue; // Saltar a la siguiente iteración para evitar otros métodos en este ciclo
-	        }
+		// Comprueba si los gnomos existen
+		if (this.gnomos != null) {
+			for (int i = 0; i < gnomos.length; i++) {
+				if (gnomos[i] == null) {
+					// Crear un nuevo gnomo si el actual es null
+					gnomos[i] = new Gnomo(anchoDeResolucion / 2, 0, 25, 25, 2);
+					continue; // Saltar a la siguiente iteración después de crear el nuevo gnomo
+				}
 
-	        // Verificar si el gnomo ha caído al vacío
-	        if (gnomos[i].getY() > altoDeResolucion) {
-	            gnomos[i] = null; // Eliminar gnomo caído
-	            continue; // Saltar a la siguiente iteración para evitar otros métodos en este ciclo
-	        }
+				// Movimiento de los gnomos
+				gnomos[i].moverHaciaCentro(anchoDeResolucion);
+				gnomos[i].aplicarGravedad();
+				gnomos[i].dibujar(this.entorno);
 
-	        // Verifica colisión con islas solo si el gnomo no es null
-	        gnomos[i].colisionConIslas(this.islasFlotantes);
-	    }
+				// Verificar si el gnomo ha sido salvado por Pep
+				if (gnomos[i].estaCercaDePep(this.pep)) {
+					gnomos[i] = null; // Gnomo salvado, eliminarlo del juego
+					this.estadoDelJuego.setGnomosSalvados(this.estadoDelJuego.getGnomosSalvados() + 1); // Sumarlo a la
+																										// cantidad de
+																										// gnomos
+																										// salvados
+					continue; // Saltar a la siguiente iteración para evitar otros métodos en este ciclo
+				}
+
+				// Verificar si el gnomo ha caído al vacío
+				if (gnomos[i].getY() > altoDeResolucion) {
+					gnomos[i] = null; // Eliminar gnomo caído
+					this.estadoDelJuego.setGnomosPerdidos(this.estadoDelJuego.getGnomosPerdidos() + 1); // Sumarlo a la
+																										// cantidad de
+																										// gnomos
+																										// perdidos
+					continue; // Saltar a la siguiente iteración para evitar otros métodos en este ciclo
+				}
+
+				// Verifica colisión con islas solo si el gnomo no es null
+				gnomos[i].colisionConIslas(this.islasFlotantes);
+			}
+		}
 	}
 
 	public void detectarMovimientosDePep() {
