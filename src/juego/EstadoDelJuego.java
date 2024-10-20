@@ -56,7 +56,7 @@ public class EstadoDelJuego {
     // Muestra el estado del juego en pantalla
     public void mostrarEnPantalla(Entorno entorno, int anchoDeResolucion, int altoDeResolucion) {
         // Fuente del juego
-        entorno.cambiarFont("Arial", anchoDeResolucion / 30, Color.BLACK);
+        entorno.cambiarFont("Comic Sans MS", anchoDeResolucion / 30, Color.DARK_GRAY);
 
         int mitadDePantalla = anchoDeResolucion / 2;
 

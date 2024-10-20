@@ -1,8 +1,9 @@
 package juego;
 
-import java.awt.Color;
+import java.awt.Image;
 
 import entorno.Entorno;
+import entorno.Herramientas;
 
 public class Gnomo extends Personaje {
 
@@ -59,9 +60,15 @@ public class Gnomo extends Personaje {
                 gnomoAbajo > pepArriba && gnomoArriba < pepAbajo;
     }
 
-    public void dibujar(Entorno entorno) {
-        if (!salvado) {
-            entorno.dibujarRectangulo(this.x, this.y, this.ancho, this.alto, 0, Color.gray);
+    public void dibujar(Entorno entorno, int altoDeResolucion) {
+        Image imagen;
+
+        if (this.direccionX == 1) {
+            imagen = Herramientas.cargarImagen("imagenes/gnomoderecha.png");
+        } else {
+            imagen = Herramientas.cargarImagen("imagenes/gnomoizquierda.png");
         }
+
+        entorno.dibujarImagen(imagen, this.x, this.y, 0, altoDeResolucion / 200);
     }
 }

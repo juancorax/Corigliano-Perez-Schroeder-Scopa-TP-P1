@@ -1,8 +1,9 @@
 package juego;
 
-import java.awt.Color;
+import java.awt.Image;
 
 import entorno.Entorno;
+import entorno.Herramientas;
 
 public class Pep extends Personaje {
 
@@ -33,8 +34,16 @@ public class Pep extends Personaje {
         }
     }
 
-    public void dibujar(Entorno entorno) {
-        entorno.dibujarRectangulo(this.x, this.y, this.ancho, this.alto, 0, Color.BLUE);
+    public void dibujar(Entorno entorno, int altoDeResolucion) {
+        Image imagen;
+
+        if (this.miraALaDerecha) {
+            imagen = Herramientas.cargarImagen("imagenes/pepderecha.png");
+        } else {
+            imagen = Herramientas.cargarImagen("imagenes/pepizquierda.png");
+        }
+
+        entorno.dibujarImagen(imagen, this.x, this.y, 0, altoDeResolucion / 200);
     }
 
     public boolean getMiraAlaDerecha() {

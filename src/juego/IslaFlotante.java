@@ -1,7 +1,9 @@
 package juego;
 
-import java.awt.Color;
+import java.awt.Image;
+
 import entorno.Entorno;
+import entorno.Herramientas;
 
 public class IslaFlotante {
 
@@ -30,8 +32,10 @@ public class IslaFlotante {
         this.alto = altoDeClase;
     }
 
-    public void dibujar(Entorno entorno) {
-        entorno.dibujarRectangulo(this.x, this.y, this.ancho, this.alto, 0, new Color(34, 139, 34));
+    public void dibujar(Entorno entorno, int altoDeResolucion) {
+        Image imagen = Herramientas.cargarImagen("imagenes/isla.png");
+
+        entorno.dibujarImagen(imagen, this.x, this.y, 0, altoDeResolucion / 200);
     }
 
     public int getX() {

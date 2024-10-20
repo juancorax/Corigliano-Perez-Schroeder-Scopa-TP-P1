@@ -1,8 +1,7 @@
 package juego;
 
-import java.awt.Color;
-
 import entorno.Entorno;
+import entorno.Herramientas;
 import entorno.InterfaceJuego;
 
 public class Juego extends InterfaceJuego {
@@ -27,6 +26,10 @@ public class Juego extends InterfaceJuego {
 	private int xDePepCuandoDisparo;
 	private boolean pepMirabaALaDerechaCuandoDisparo;
 
+	// Variables para determinar que tipo de casa dibujar
+	private boolean algunGnomoNoExiste = false;
+	private int milisegundosHastaAhora;
+
 	Juego() {
 		// Instancia el objeto entorno
 		this.entorno = new Entorno(this, "Al Rescate de los Gnomos", anchoDeResolucion, this.altoDeResolucion);
@@ -36,13 +39,10 @@ public class Juego extends InterfaceJuego {
 
 		// Valores automaticamente calculados dependiendo de la resolucion
 		// Se utilizan para instanciar las islas
-		int centroX = anchoDeResolucion / 2;
+		int centroX = this.anchoDeResolucion / 2;
 		int centroY = this.altoDeResolucion / 2;
 		int separacionHorizontal = centroX / 3;
 		int separacionVertical = centroY / 3;
-
-		// Color del fondo
-		this.entorno.colorFondo(new Color(173, 216, 230));
 
 		// Instanciacion del estado del juego
 		this.estadoDelJuego = new EstadoDelJuego();
@@ -67,7 +67,7 @@ public class Juego extends InterfaceJuego {
 		// Instanciacion de los Gnomos
 		this.gnomos = new Gnomo[3];
 		for (int i = 0; i < gnomos.length; i++) {
-			gnomos[i] = new Gnomo(anchoDeResolucion / 2, 0, 25, 25, 2);
+			gnomos[i] = new Gnomo(anchoDeResolucion / 2, altoDeResolucion / 10, 25, 25, 2);
 		}
 
 		// Instanciacion de Pep
@@ -87,14 +87,45 @@ public class Juego extends InterfaceJuego {
 	public void tick() {
 		// Procesamiento de un instante de tiempo
 
+		// dibuja el fondo
+		this.entorno.dibujarImagen(Herramientas.cargarImagen("imagenes/fondo.png"), anchoDeResolucion / 2,
+				altoDeResolucion / 2, 0, 2);
+
 		// Muestra en pantalla el estado del juego
-		this.estadoDelJuego.mostrarEnPantalla(this.entorno, anchoDeResolucion, altoDeResolucion);
+		this.estadoDelJuego.mostrarEnPantalla(this.entorno, anchoDeResolucion,
+				altoDeResolucion);
+
+		// Comprueba si algun gnomo no existe
+		for (Gnomo gnomo : this.gnomos) {
+			if (gnomo == null) {
+				this.algunGnomoNoExiste = true;
+				this.milisegundosHastaAhora = this.entorno.tiempo();
+				break;
+			}
+		}
+
+		// Si algun gnomo no existe, se dibuja la casa con la puerta abierta.
+		// En caso contrario, se dibuja la casa normal
+		if (this.algunGnomoNoExiste) {
+			this.entorno.dibujarImagen(Herramientas.cargarImagen("imagenes/casadegnomosabierta.png"),
+					anchoDeResolucion / 2,
+					altoDeResolucion / 15, 0, 3);
+		} else {
+			this.entorno.dibujarImagen(Herramientas.cargarImagen("imagenes/casadegnomos.png"), anchoDeResolucion / 2,
+					altoDeResolucion / 15, 0, 3);
+		}
+
+		// Se reinicia la variable 'algunGnomoNoExiste' despues de medio segundo
+		// de que se detectara que un gnomo no existe
+		if (this.algunGnomoNoExiste && this.entorno.tiempo() - this.milisegundosHastaAhora >= 500) {
+			this.algunGnomoNoExiste = false;
+		}
 
 		// Comprueba si las islas existen
 		// y dibuja cada isla en pantalla
 		if (this.islasFlotantes != null) {
 			for (int i = 0; i < islasFlotantes.length; i++) {
-				this.islasFlotantes[i].dibujar(this.entorno);
+				this.islasFlotantes[i].dibujar(this.entorno, this.altoDeResolucion);
 			}
 		}
 
@@ -102,7 +133,7 @@ public class Juego extends InterfaceJuego {
 		// no se cayo al vacio
 		if (this.pep != null) {
 			// Dibuja a Pep
-			this.pep.dibujar(this.entorno);
+			this.pep.dibujar(this.entorno, altoDeResolucion);
 
 			detectarMovimientosDePep();
 
@@ -121,7 +152,7 @@ public class Juego extends InterfaceJuego {
 
 			// Si el disparo existe, lo dibuja
 			if (this.disparo != null) {
-				this.disparo.dibujar(this.entorno);
+				this.disparo.dibujar(this.entorno, this.altoDeResolucion, this.pepMirabaALaDerechaCuandoDisparo);
 
 				// Mueve el disparo dependiendo de la direccion
 				// a la cual Pep miraba
@@ -158,14 +189,14 @@ public class Juego extends InterfaceJuego {
 			for (int i = 0; i < gnomos.length; i++) {
 				if (gnomos[i] == null) {
 					// Crear un nuevo gnomo si el actual es null
-					gnomos[i] = new Gnomo(anchoDeResolucion / 2, 0, 25, 25, 2);
+					gnomos[i] = new Gnomo(anchoDeResolucion / 2, altoDeResolucion / 10, 25, 25, 2);
 					continue; // Saltar a la siguiente iteración después de crear el nuevo gnomo
 				}
 
 				// Movimiento de los gnomos
 				gnomos[i].moverHaciaCentro(anchoDeResolucion);
 				gnomos[i].aplicarGravedad();
-				gnomos[i].dibujar(this.entorno);
+				gnomos[i].dibujar(this.entorno, altoDeResolucion);
 
 				// Verificar si el gnomo ha sido salvado por Pep
 				if (gnomos[i].estaCercaDePep(this.pep)) {

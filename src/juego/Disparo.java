@@ -1,8 +1,9 @@
 package juego;
 
-import java.awt.Color;
+import java.awt.Image;
 
 import entorno.Entorno;
+import entorno.Herramientas;
 
 public class Disparo {
 
@@ -26,8 +27,17 @@ public class Disparo {
         this.x -= this.velocidad;
     }
 
-    public void dibujar(Entorno entorno) {
-        entorno.dibujarCirculo(this.x, this.y, this.radio * 2, Color.ORANGE);
+    public void dibujar(Entorno entorno, int altoDeResolucion, boolean pepMirabaALaDerechaCuandoDisparo) {
+        Image imagen;
+
+        if (pepMirabaALaDerechaCuandoDisparo) {
+            imagen = Herramientas.cargarImagen("imagenes/poderderecha.png");
+        } else {
+            imagen = Herramientas.cargarImagen("imagenes/poderizquierda.png");
+        }
+
+        entorno.dibujarImagen(imagen, this.x, this.y, 0, altoDeResolucion / 200);
+        entorno.dibujarImagen(imagen, this.x, this.y, 0, altoDeResolucion / 200);
     }
 
     public int getX() {
