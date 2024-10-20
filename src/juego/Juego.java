@@ -16,6 +16,7 @@ public class Juego extends InterfaceJuego {
 	private Pep pep;
 	private Disparo disparo;
 	private Gnomo[] gnomos;
+	private Tortuga[] tortugas;
 
 	// Resolucion del juego
 	private int anchoDeResolucion = 1280;
@@ -69,6 +70,11 @@ public class Juego extends InterfaceJuego {
 		for (int i = 0; i < gnomos.length; i++) {
 			gnomos[i] = new Gnomo(anchoDeResolucion / 2, altoDeResolucion / 10, 25, 25, 2);
 		}
+		//Instanciacion de las Tortugas
+				this.tortugas = new Tortuga[3];
+				tortugas[0] = new Tortuga(427, 0, 25, 25, 2);
+				tortugas[1] = new Tortuga(214, 0, 25, 25, 2);
+				tortugas[2] = new Tortuga(1066, 0, 25, 25, 2);
 
 		// Instanciacion de Pep
 		this.pep = new Pep(centroX, (separacionVertical * 5) - (this.altoDeResolucion / 20), altoDeResolucion / 20,
@@ -94,13 +100,14 @@ public class Juego extends InterfaceJuego {
 		// Muestra en pantalla el estado del juego
 		this.estadoDelJuego.mostrarEnPantalla(this.entorno, anchoDeResolucion,
 				altoDeResolucion);
-
-		// Comprueba si algun gnomo no existe
-		for (Gnomo gnomo : this.gnomos) {
-			if (gnomo == null) {
-				this.algunGnomoNoExiste = true;
-				this.milisegundosHastaAhora = this.entorno.tiempo();
-				break;
+		if(this.gnomos!=null) {
+			// Comprueba si algun gnomo no existe
+			for (Gnomo gnomo : this.gnomos) {
+				if (gnomo == null) {
+					this.algunGnomoNoExiste = true;
+					this.milisegundosHastaAhora = this.entorno.tiempo();
+					break;
+				}
 			}
 		}
 
@@ -181,6 +188,7 @@ public class Juego extends InterfaceJuego {
 				this.pep = null;
 				this.islasFlotantes = null;
 				this.gnomos = null;
+				this.tortugas= null;
 			}
 		}
 
@@ -222,7 +230,24 @@ public class Juego extends InterfaceJuego {
 				gnomos[i].colisionConIslas(this.islasFlotantes);
 			}
 		}
-	}
+		//TORTUGAS
+				if(this.tortugas!=null) {
+					for (int i = 0; i < tortugas.length; i++) { 
+						tortugas[i].aplicarGravedad();
+						tortugas[i].dibujar(this.entorno);   
+						tortugas[i].colisionConIslas(this.islasFlotantes);	
+			        	}
+				
+					tortugas[0].rebotarTortugas(anchoDeResolucion,(anchoDeResolucion/2)-((anchoDeResolucion/2)/3)-(anchoDeResolucion/12)
+							,(anchoDeResolucion/2)-((anchoDeResolucion/2)/3)+(anchoDeResolucion/12));
+				
+					tortugas[1].rebotarTortugas(anchoDeResolucion,((anchoDeResolucion/2)-((anchoDeResolucion/2)/3)*2)-(anchoDeResolucion/12)
+							,((anchoDeResolucion/2)-((anchoDeResolucion/2)/3)*2)+(anchoDeResolucion/12));
+				
+					tortugas[2].rebotarTortugas(anchoDeResolucion,((anchoDeResolucion/2)+((anchoDeResolucion/2)/3)*2)-(anchoDeResolucion/12)
+							,((anchoDeResolucion/2)+((anchoDeResolucion/2)/3)*2)+(anchoDeResolucion/12));
+				}
+		}
 
 	public void detectarMovimientosDePep() {
 		// Movimiento hacia la derecha
