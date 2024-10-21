@@ -11,9 +11,27 @@ public class Gnomo extends Personaje {
     private boolean salvado = false;
     private int direccionX; // -1 para izquierda, 1 para derecha
 
+    // Array que contiene la animacion de caminar a la derecha
+    private Image[] caminarALaDerecha = new Image[5];
+    // Array que contiene la animacion de caminar a la izquierda
+    private Image[] caminarALaIzquierda = new Image[5];
+
+    // Tiempo tomado desde que el gnomo cambio de frame en la animacion
+    private int tiempoTranscurrido = 0;
+
+    // Variable para almacenar los indices del frame de animacion anterior
+    private int imagenAnteriorDerecha = 0;
+    private int imagenAnteriorIzquierda = 0;
+
     public Gnomo(int x, int y, int ancho, int alto, int velocidad) {
         super(x, y, ancho, alto, velocidad);
         this.direccionX = (Math.random() < 0.5) ? -1 : 1; // Asigna una dirección aleatoria al crear el gnomo
+
+        // Almacena cada frame de animacion dentro de los arrays
+        for (int i = 0; i < caminarALaDerecha.length; i++) {
+            this.caminarALaDerecha[i] = Herramientas.cargarImagen("imagenes/gnomocaminaderecha" + (i + 1) + ".png");
+            this.caminarALaIzquierda[i] = Herramientas.cargarImagen("imagenes/gnomocaminaizquierda" + (i + 1) + ".png");
+        }
     }
 
     public boolean estaSalvado() {
@@ -64,9 +82,27 @@ public class Gnomo extends Personaje {
         Image imagen;
 
         if (this.direccionX == 1) {
-            imagen = Herramientas.cargarImagen("imagenes/gnomoderecha.png");
+            imagen = this.caminarALaDerecha[this.imagenAnteriorDerecha];
+
+            if (entorno.tiempo() - this.tiempoTranscurrido > 50) {
+                this.imagenAnteriorDerecha++;
+                this.tiempoTranscurrido = entorno.tiempo();
+            }
+
+            if (this.imagenAnteriorDerecha > this.caminarALaDerecha.length - 1) {
+                this.imagenAnteriorDerecha = 0;
+            }
         } else {
-            imagen = Herramientas.cargarImagen("imagenes/gnomoizquierda.png");
+            imagen = this.caminarALaIzquierda[this.imagenAnteriorIzquierda];
+
+            if (entorno.tiempo() - this.tiempoTranscurrido > 50) {
+                this.imagenAnteriorIzquierda++;
+                this.tiempoTranscurrido = entorno.tiempo();
+            }
+
+            if (this.imagenAnteriorIzquierda > this.caminarALaIzquierda.length - 1) {
+                this.imagenAnteriorIzquierda = 0;
+            }
         }
 
         entorno.dibujarImagen(imagen, this.x, this.y, 0, altoDeResolucion / 200);
