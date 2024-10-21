@@ -48,6 +48,11 @@ public class Juego extends InterfaceJuego {
 		int centroY = this.altoDeResolucion / 2;
 		int separacionHorizontal = centroX / 3;
 		int separacionVertical = centroY / 3;
+		
+		//Variable para el math.random de las tortugas (TORTUGAS POR AHORA)
+		int xTortuga=0;
+		int islasElegidas[];
+		islasElegidas = new int[3];
 
 		// Instanciacion del estado del juego
 		this.estadoDelJuego = new EstadoDelJuego();
@@ -74,11 +79,16 @@ public class Juego extends InterfaceJuego {
 		for (int i = 0; i < gnomos.length; i++) {
 			gnomos[i] = new Gnomo(anchoDeResolucion / 2, altoDeResolucion / 10, 25, 25, 2);
 		}
-		// Instanciacion de las Tortugas
-		this.tortugas = new Tortuga[3];
-		tortugas[0] = new Tortuga(427, 0, 25, 25, 2);
-		tortugas[1] = new Tortuga(214, 0, 25, 25, 2);
-		tortugas[2] = new Tortuga(1066, 0, 25, 25, 2);
+		//Instanciacion de las Tortugas
+				this.tortugas = new Tortuga[3];
+				for (int i =0; i < gnomos.length;i++) {
+					//Elige una isla entre la 0 y la 5 excluyendo la 0 y la 4
+					while(xTortuga==0 || xTortuga==4 || xTortuga==islasElegidas[0] || xTortuga==islasElegidas[1]) {
+						xTortuga = (int) Math.floor(Math.random()*6); 
+					}
+					islasElegidas[i]=xTortuga;
+					tortugas[i]= new Tortuga(islasFlotantes[islasElegidas[i]].getX(),0,25,25,0);
+				}
 
 		// Instanciacion de Pep
 		this.pep = new Pep(centroX, (separacionVertical * 5) - (this.altoDeResolucion / 20), altoDeResolucion / 20,
@@ -241,25 +251,59 @@ public class Juego extends InterfaceJuego {
 				gnomos[i].colisionConIslas(this.islasFlotantes);
 			}
 		}
-		// TORTUGAS
-		if (this.tortugas != null) {
+		//Movimiento de las tortugas
+		if(this.tortugas!=null) {
 			for (int i = 0; i < tortugas.length; i++) {
-				tortugas[i].aplicarGravedad();
-				tortugas[i].dibujar(this.entorno);
-				tortugas[i].colisionConIslas(this.islasFlotantes);
+				if (tortugas[i]!=null){							
+					tortugas[i].aplicarGravedad();
+					tortugas[i].dibujar(this.entorno,altoDeResolucion);
+					tortugas[i].colisionConIslas(this.islasFlotantes);
+					
+					//La tortuga cae en isla 1:
+					if (tortugas[i].getX()>(anchoDeResolucion/2)-((anchoDeResolucion/2)/3)-(anchoDeResolucion/12) && tortugas[i].getX()<islasFlotantes[0].getX()) {
+						tortugas[i].rebotarTortugas(anchoDeResolucion,(anchoDeResolucion/2)-((anchoDeResolucion/2)/3)-(anchoDeResolucion/12)
+								,(anchoDeResolucion/2)-((anchoDeResolucion/2)/3)+(anchoDeResolucion/12));
+						if(tortugas[i].getY()==(islasFlotantes[1].getY()-(islasFlotantes[1].getAlto()/2))-12) {
+							tortugas[i].setVelocidad(1);
+						}
+					
+						//La tortuga cae en isla 2:
+					}else if(tortugas[i].getX()>islasFlotantes[0].getX() && tortugas[i].getX()<(anchoDeResolucion/2)+((anchoDeResolucion/2)/3)+(anchoDeResolucion/12)) {
+						tortugas[i].rebotarTortugas(anchoDeResolucion,(anchoDeResolucion/2)+((anchoDeResolucion/2)/3)-(anchoDeResolucion/12)
+								,(anchoDeResolucion/2)+((anchoDeResolucion/2)/3)+(anchoDeResolucion/12));
+						if(tortugas[i].getY()==(islasFlotantes[2].getY()-(islasFlotantes[1].getAlto()/2))-12) {
+							tortugas[i].setVelocidad(1);
+						}
+						
+						//La tortuga cae en isla 3:
+					}else if(tortugas[i].getX()<islasFlotantes[1].getX()) {
+						tortugas[i].rebotarTortugas(anchoDeResolucion,((anchoDeResolucion/2)-((anchoDeResolucion/2)/3)*2)-(anchoDeResolucion/12)
+								,((anchoDeResolucion/2)-((anchoDeResolucion/2)/3)*2)+(anchoDeResolucion/12));
+						if(tortugas[i].getY()==(islasFlotantes[3].getY()-(islasFlotantes[1].getAlto()/2))-12) {
+							tortugas[i].setVelocidad(1);
+						}
+						
+						//La tortuga cae en isla 5:
+					}else if(tortugas[i].getX()>islasFlotantes[2].getX()) {
+						tortugas[i].rebotarTortugas(anchoDeResolucion,((anchoDeResolucion/2)+((anchoDeResolucion/2)/3)*2)-(anchoDeResolucion/12)
+								,((anchoDeResolucion/2)+((anchoDeResolucion/2)/3)*2)+(anchoDeResolucion/12));
+						if(tortugas[i].getY()==(islasFlotantes[5].getY()-(islasFlotantes[1].getAlto()/2))-12) {
+							tortugas[i].setVelocidad(1);
+						}
+					}
+					//Si la tortuga choca con Pep:
+					if (tortugas[i].estaCercaDePep(this.pep)) {
+						this.pep.y=this.altoDeResolucion+100;
+					}
+					/*//Si un disparo toca a una tortuga:
+					if(disparo!=null) {
+						if (tortugas[i].estaCercaDeDisparo(this.disparo)) {
+							tortugas[i]=null;
+						}
+					}*/
+				}
 			}
 
-			tortugas[0].rebotarTortugas(anchoDeResolucion,
-					(anchoDeResolucion / 2) - ((anchoDeResolucion / 2) / 3) - (anchoDeResolucion / 12),
-					(anchoDeResolucion / 2) - ((anchoDeResolucion / 2) / 3) + (anchoDeResolucion / 12));
-
-			tortugas[1].rebotarTortugas(anchoDeResolucion,
-					((anchoDeResolucion / 2) - ((anchoDeResolucion / 2) / 3) * 2) - (anchoDeResolucion / 12),
-					((anchoDeResolucion / 2) - ((anchoDeResolucion / 2) / 3) * 2) + (anchoDeResolucion / 12));
-
-			tortugas[2].rebotarTortugas(anchoDeResolucion,
-					((anchoDeResolucion / 2) + ((anchoDeResolucion / 2) / 3) * 2) - (anchoDeResolucion / 12),
-					((anchoDeResolucion / 2) + ((anchoDeResolucion / 2) / 3) * 2) + (anchoDeResolucion / 12));
 		}
 	}
 
