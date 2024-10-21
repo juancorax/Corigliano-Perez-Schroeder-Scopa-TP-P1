@@ -22,10 +22,14 @@ public class Juego extends InterfaceJuego {
 	private int anchoDeResolucion = 1280;
 	private int altoDeResolucion = 720;
 
-	// Variables para determinar el movimiento
-	// y duracion del disparo
+	// Variables para determinar el movimiento, duracion
+	// y dibujo del disparo
 	private int xDePepCuandoDisparo;
 	private boolean pepMirabaALaDerechaCuandoDisparo;
+
+	// Variables para determinar que Pep esta caminando
+	private boolean pepCamina = false;
+	private int xDePepAnterior;
 
 	// Variables para determinar que tipo de casa dibujar
 	private boolean algunGnomoNoExiste = false;
@@ -70,11 +74,11 @@ public class Juego extends InterfaceJuego {
 		for (int i = 0; i < gnomos.length; i++) {
 			gnomos[i] = new Gnomo(anchoDeResolucion / 2, altoDeResolucion / 10, 25, 25, 2);
 		}
-		//Instanciacion de las Tortugas
-				this.tortugas = new Tortuga[3];
-				tortugas[0] = new Tortuga(427, 0, 25, 25, 2);
-				tortugas[1] = new Tortuga(214, 0, 25, 25, 2);
-				tortugas[2] = new Tortuga(1066, 0, 25, 25, 2);
+		// Instanciacion de las Tortugas
+		this.tortugas = new Tortuga[3];
+		tortugas[0] = new Tortuga(427, 0, 25, 25, 2);
+		tortugas[1] = new Tortuga(214, 0, 25, 25, 2);
+		tortugas[2] = new Tortuga(1066, 0, 25, 25, 2);
 
 		// Instanciacion de Pep
 		this.pep = new Pep(centroX, (separacionVertical * 5) - (this.altoDeResolucion / 20), altoDeResolucion / 20,
@@ -100,7 +104,9 @@ public class Juego extends InterfaceJuego {
 		// Muestra en pantalla el estado del juego
 		this.estadoDelJuego.mostrarEnPantalla(this.entorno, anchoDeResolucion,
 				altoDeResolucion);
-		if(this.gnomos!=null) {
+
+		// Comprueba si los gnomos existen
+		if (this.gnomos != null) {
 			// Comprueba si algun gnomo no existe
 			for (Gnomo gnomo : this.gnomos) {
 				if (gnomo == null) {
@@ -140,7 +146,12 @@ public class Juego extends InterfaceJuego {
 		// no se cayo al vacio
 		if (this.pep != null) {
 			// Dibuja a Pep
-			this.pep.dibujar(this.entorno, altoDeResolucion);
+			this.pep.dibujar(this.entorno, this.altoDeResolucion, this.disparo != null, this.pepCamina);
+
+			// Se reinicia la variable 'pepCamina' si Pep deja de caminar
+			if (this.pep.getX() == this.xDePepAnterior) {
+				this.pepCamina = false;
+			}
 
 			detectarMovimientosDePep();
 
@@ -188,7 +199,7 @@ public class Juego extends InterfaceJuego {
 				this.pep = null;
 				this.islasFlotantes = null;
 				this.gnomos = null;
-				this.tortugas= null;
+				this.tortugas = null;
 			}
 		}
 
@@ -230,24 +241,27 @@ public class Juego extends InterfaceJuego {
 				gnomos[i].colisionConIslas(this.islasFlotantes);
 			}
 		}
-		//TORTUGAS
-				if(this.tortugas!=null) {
-					for (int i = 0; i < tortugas.length; i++) { 
-						tortugas[i].aplicarGravedad();
-						tortugas[i].dibujar(this.entorno);   
-						tortugas[i].colisionConIslas(this.islasFlotantes);	
-			        	}
-				
-					tortugas[0].rebotarTortugas(anchoDeResolucion,(anchoDeResolucion/2)-((anchoDeResolucion/2)/3)-(anchoDeResolucion/12)
-							,(anchoDeResolucion/2)-((anchoDeResolucion/2)/3)+(anchoDeResolucion/12));
-				
-					tortugas[1].rebotarTortugas(anchoDeResolucion,((anchoDeResolucion/2)-((anchoDeResolucion/2)/3)*2)-(anchoDeResolucion/12)
-							,((anchoDeResolucion/2)-((anchoDeResolucion/2)/3)*2)+(anchoDeResolucion/12));
-				
-					tortugas[2].rebotarTortugas(anchoDeResolucion,((anchoDeResolucion/2)+((anchoDeResolucion/2)/3)*2)-(anchoDeResolucion/12)
-							,((anchoDeResolucion/2)+((anchoDeResolucion/2)/3)*2)+(anchoDeResolucion/12));
-				}
+		// TORTUGAS
+		if (this.tortugas != null) {
+			for (int i = 0; i < tortugas.length; i++) {
+				tortugas[i].aplicarGravedad();
+				tortugas[i].dibujar(this.entorno);
+				tortugas[i].colisionConIslas(this.islasFlotantes);
+			}
+
+			tortugas[0].rebotarTortugas(anchoDeResolucion,
+					(anchoDeResolucion / 2) - ((anchoDeResolucion / 2) / 3) - (anchoDeResolucion / 12),
+					(anchoDeResolucion / 2) - ((anchoDeResolucion / 2) / 3) + (anchoDeResolucion / 12));
+
+			tortugas[1].rebotarTortugas(anchoDeResolucion,
+					((anchoDeResolucion / 2) - ((anchoDeResolucion / 2) / 3) * 2) - (anchoDeResolucion / 12),
+					((anchoDeResolucion / 2) - ((anchoDeResolucion / 2) / 3) * 2) + (anchoDeResolucion / 12));
+
+			tortugas[2].rebotarTortugas(anchoDeResolucion,
+					((anchoDeResolucion / 2) + ((anchoDeResolucion / 2) / 3) * 2) - (anchoDeResolucion / 12),
+					((anchoDeResolucion / 2) + ((anchoDeResolucion / 2) / 3) * 2) + (anchoDeResolucion / 12));
 		}
+	}
 
 	public void detectarMovimientosDePep() {
 		// Movimiento hacia la derecha
@@ -255,6 +269,8 @@ public class Juego extends InterfaceJuego {
 				|| this.entorno.estaPresionada('d');
 		if (sePresionoLaTeclaDerecha) {
 			this.pep.moverDerecha();
+			this.pepCamina = true;
+			this.xDePepAnterior = this.pep.getX();
 		}
 
 		// Movimiento hacia la izquierda
@@ -262,6 +278,8 @@ public class Juego extends InterfaceJuego {
 				|| this.entorno.estaPresionada('a');
 		if (sePresionoLaTeclaIzquierda) {
 			this.pep.moverIzquierda();
+			this.pepCamina = true;
+			this.xDePepAnterior = this.pep.getX();
 		}
 
 		// Salto

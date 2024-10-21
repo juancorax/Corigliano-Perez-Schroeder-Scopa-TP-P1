@@ -5,30 +5,30 @@ import java.awt.Color;
 import entorno.Entorno;
 
 public class Tortuga extends Personaje {
-	
-	private int velocidad=1;
-	private int direccionX;
-	
-	public Tortuga(int x, int y, int ancho, int alto, int velocidad) {
-		super(x, y, ancho, alto, velocidad);
-		this.direccionX = (Math.random() < 0.5) ? -1 : 1;
-	}
 
-	public int getVelocidad() {
-		return velocidad;
-	}
+    private int velocidad = 1;
+    private int direccionX;
 
-	public void setVelocidad(int velocidad) {
-		this.velocidad = velocidad;
-	}
-	
-	public void rebotarTortugas(int centroX,int bordeIzquierdo, int bordeDerecho) {
+    public Tortuga(int x, int y, int ancho, int alto, int velocidad) {
+        super(x, y, ancho, alto, velocidad);
+        this.direccionX = (Math.random() < 0.5) ? -1 : 1;
+    }
+
+    public int getVelocidad() {
+        return velocidad;
+    }
+
+    public void setVelocidad(int velocidad) {
+        this.velocidad = velocidad;
+    }
+
+    public void rebotarTortugas(int centroX, int bordeIzquierdo, int bordeDerecho) {
 
         // cambiar dirección
-        if (x<bordeIzquierdo || x>bordeDerecho) {
-        	direccionX = -direccionX;
+        if (x < bordeIzquierdo || x > bordeDerecho) {
+            direccionX = -direccionX;
         }
-        
+
         if (x < centroX) {
             x += this.velocidad * direccionX; // Moverse a la derecha o izquierda
         } else if (x > centroX) {
@@ -42,8 +42,8 @@ public class Tortuga extends Personaje {
             x = 1280;
         }
     }
-	
-	public void dibujar(Entorno entorno) {
-			entorno.dibujarRectangulo(this.x, this.y, this.ancho, this.alto, 0, Color.red);
-        }
+
+    public void dibujar(Entorno entorno) {
+        entorno.dibujarRectangulo(this.x, this.y, this.ancho, this.alto, 0, Color.red);
+    }
 }
