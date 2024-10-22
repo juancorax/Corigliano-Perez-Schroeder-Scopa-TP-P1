@@ -77,7 +77,7 @@ public class Gnomo extends Personaje {
         return gnomoDerecha > pepIzquierda && gnomoIzquierda < pepDerecha &&
                 gnomoAbajo > pepArriba && gnomoArriba < pepAbajo;
     }
-    
+
     boolean estaCercaDeTortuga(Tortuga tortuga) {
         int tortugaIzquierda = tortuga.getX() - tortuga.getAncho() / 2;
         int tortugaDerecha = tortuga.getX() + tortuga.getAncho() / 2;

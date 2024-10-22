@@ -72,8 +72,8 @@ public class Juego extends InterfaceJuego {
 		this.islasFlotantes[6] = new IslaFlotante(centroX - separacionHorizontal, separacionVertical * 4);
 		this.islasFlotantes[7] = new IslaFlotante(centroX + separacionHorizontal, separacionVertical * 4);
 		this.islasFlotantes[8] = new IslaFlotante(centroX, separacionVertical * 5);
-		System.out.println("Coordenada Y de isla 1: "+separacionVertical * 2);
-		System.out.println("Piso de isla 1: "+((separacionVertical * 2)-this.islasFlotantes[1].getAlto()/2));
+		System.out.println("Coordenada Y de isla 1: " + separacionVertical * 2);
+		System.out.println("Piso de isla 1: " + ((separacionVertical * 2) - this.islasFlotantes[1].getAlto() / 2));
 
 		// Instanciacion de los Gnomos
 		this.gnomos = new Gnomo[3];
@@ -127,20 +127,23 @@ public class Juego extends InterfaceJuego {
 			}
 		}
 
-		// Si algun gnomo no existe, se dibuja la casa con la puerta abierta.
-		// En caso contrario, se dibuja la casa normal
-		if (this.algunGnomoNoExiste) {
-			this.entorno.dibujarImagen(Herramientas.cargarImagen("imagenes/casadegnomosabierta.png"),
-					anchoDeResolucion / 2, altoDeResolucion / 15, 0, 3);
-		} else {
-			this.entorno.dibujarImagen(Herramientas.cargarImagen("imagenes/casadegnomos.png"), anchoDeResolucion / 2,
-					altoDeResolucion / 15, 0, 3);
-		}
+		if (this.pep != null) {
+			// Si algun gnomo no existe, se dibuja la casa con la puerta abierta.
+			// En caso contrario, se dibuja la casa normal
+			if (this.algunGnomoNoExiste) {
+				this.entorno.dibujarImagen(Herramientas.cargarImagen("imagenes/casadegnomosabierta.png"),
+						anchoDeResolucion / 2, altoDeResolucion / 15, 0, 3);
+			} else {
+				this.entorno.dibujarImagen(Herramientas.cargarImagen("imagenes/casadegnomos.png"),
+						anchoDeResolucion / 2,
+						altoDeResolucion / 15, 0, 3);
+			}
 
-		// Se reinicia la variable 'algunGnomoNoExiste' despues de medio segundo
-		// de que se detectara que un gnomo no existe
-		if (this.algunGnomoNoExiste && this.entorno.tiempo() - this.milisegundosHastaAhora >= 500) {
-			this.algunGnomoNoExiste = false;
+			// Se reinicia la variable 'algunGnomoNoExiste' despues de medio segundo
+			// de que se detectara que un gnomo no existe
+			if (this.algunGnomoNoExiste && this.entorno.tiempo() - this.milisegundosHastaAhora >= 500) {
+				this.algunGnomoNoExiste = false;
+			}
 		}
 
 		// Comprueba si las islas existen
@@ -227,7 +230,7 @@ public class Juego extends InterfaceJuego {
 					gnomos[i].dibujar(this.entorno, altoDeResolucion);
 
 					// Verificar si el gnomo ha sido salvado por Pep
-					if (gnomos[i].estaCercaDePep(this.pep) && gnomos[i].getY()>this.altoDeResolucion / 2) {
+					if (gnomos[i].estaCercaDePep(this.pep) && gnomos[i].getY() > this.altoDeResolucion / 2) {
 						gnomos[i] = null; // Gnomo salvado, eliminarlo del juego
 						this.estadoDelJuego.setGnomosSalvados(this.estadoDelJuego.getGnomosSalvados() + 1); // Sumarlo a
 																											// la
@@ -287,7 +290,7 @@ public class Juego extends InterfaceJuego {
 						tortugas[i].rebotarTortugas(anchoDeResolucion,
 								(anchoDeResolucion / 2) - ((anchoDeResolucion / 2) / 3) - (anchoDeResolucion / 12),
 								(anchoDeResolucion / 2) - ((anchoDeResolucion / 2) / 3) + (anchoDeResolucion / 12));
-						System.out.println("Coordenadas Y de la tortuga "+tortugas[i].getY());
+						System.out.println("Coordenadas Y de la tortuga " + tortugas[i].getY());
 						if (tortugas[i].getY() == (islasFlotantes[1].getY() - (islasFlotantes[1].getAlto() / 2)) - 12) {
 							tortugas[i].setVelocidad(1);
 						}
