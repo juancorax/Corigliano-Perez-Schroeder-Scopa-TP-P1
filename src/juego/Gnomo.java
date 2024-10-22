@@ -77,6 +77,21 @@ public class Gnomo extends Personaje {
         return gnomoDerecha > pepIzquierda && gnomoIzquierda < pepDerecha &&
                 gnomoAbajo > pepArriba && gnomoArriba < pepAbajo;
     }
+    
+    boolean estaCercaDeTortuga(Tortuga tortuga) {
+        int tortugaIzquierda = tortuga.getX() - tortuga.getAncho() / 2;
+        int tortugaDerecha = tortuga.getX() + tortuga.getAncho() / 2;
+        int tortugaArriba = tortuga.getY() - tortuga.getAlto() / 2;
+        int tortugaAbajo = tortuga.getY() + tortuga.getAlto() / 2;
+
+        int gnomoIzquierda = this.x - this.ancho / 2;
+        int gnomoDerecha = this.x + this.ancho / 2;
+        int gnomoArriba = this.y - this.alto / 2;
+        int gnomoAbajo = this.y + this.alto / 2;
+
+        return gnomoDerecha > tortugaIzquierda && gnomoIzquierda < tortugaDerecha &&
+                gnomoAbajo > tortugaArriba && gnomoArriba < tortugaAbajo;
+    }
 
     public void dibujar(Entorno entorno, int altoDeResolucion) {
         Image imagen;
