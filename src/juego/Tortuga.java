@@ -8,6 +8,7 @@ import entorno.Herramientas;
 public class Tortuga extends Personaje {
 
 	private int direccionX;
+	private int isla;
 
 	// Array que contiene la animacion de caminar a la derecha
 	private Image[] caminarALaDerecha = new Image[5];
@@ -21,9 +22,10 @@ public class Tortuga extends Personaje {
 	private int imagenAnteriorDerecha = 0;
 	private int imagenAnteriorIzquierda = 0;
 
-	public Tortuga(int x, int y, int ancho, int alto, int velocidad) {
+	public Tortuga(int x, int y, int ancho, int alto, int velocidad, int isla) {
 		super(x, y, ancho, alto, velocidad);
 		this.direccionX = (Math.random() < 0.5) ? -1 : 1;
+		this.isla=isla;
 
 		// Almacena cada frame de animacion dentro de los arrays
 		for (int i = 0; i < caminarALaDerecha.length; i++) {
@@ -44,9 +46,21 @@ public class Tortuga extends Personaje {
 	public int getAlto() {
 		return alto;
 	}
+	
+	public int getIsla() {
+		return isla;
+	}
 
 	public void setVelocidad(int velocidad) {
 		this.velocidad = velocidad;
+	}
+	
+	public void setX(int x) {
+		this.x=x;
+	}
+	
+	public void setY(int y) {
+		this.y=y;
 	}
 
 	public void rebotarTortugas(int centroX, int bordeIzquierdo, int bordeDerecho) {
@@ -84,6 +98,21 @@ public class Tortuga extends Personaje {
 		return tortugaDerecha > pepIzquierda && tortugaIzquierda < pepDerecha && tortugaAbajo > pepArriba
 				&& tortugaArriba < pepAbajo;
 	}
+	
+	public boolean intersectaConDisparo(Disparo disparo) {
+        int xMin1 = this.x - ancho / 2;
+        int xMax1 = this.x + ancho / 2;
+        int yMin1 = this.y - alto / 2;
+        int yMax1 = this.y + alto / 2;
+
+        int xMin2 = disparo.getX() - disparo.getAncho() / 2;
+        int xMax2 = disparo.getX() + disparo.getAncho() / 2;
+        int yMin2 = disparo.getY() - disparo.getAlto() / 2;
+        int yMax2 = disparo.getY() + disparo.getAlto() / 2;
+
+        return (xMin1 < xMax2 && xMax1 > xMin2 &&
+                yMin1 < yMax2 && yMax1 > yMin2);
+    }
 
 	public void dibujar(Entorno entorno, int altoDeResolucion) {
 		Image imagen;

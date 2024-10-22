@@ -1,5 +1,6 @@
 package juego;
 
+import java.awt.Color;
 import java.awt.Image;
 
 import entorno.Entorno;
@@ -9,13 +10,15 @@ public class Disparo {
 
     private int x;
     private int y;
-    private int radio;
+    private int ancho;
+    private int alto;
     private int velocidad;
 
-    public Disparo(int x, int y, int radio, int velocidad) {
+    public Disparo(int x, int y, int ancho, int alto, int velocidad) {
         this.x = x;
         this.y = y;
-        this.radio = radio;
+        this.ancho = ancho;
+        this.alto = alto;
         this.velocidad = velocidad;
     }
 
@@ -26,8 +29,12 @@ public class Disparo {
     public void moverALaIzquierda() {
         this.x -= this.velocidad;
     }
+    
+    /*public void dibujar(Entorno entorno) {
+        entorno.dibujarRectangulo(this.x, this.y, this.ancho, this.alto, 0, Color.ORANGE);
+    }*/
 
-    public void dibujar(Entorno entorno, int altoDeResolucion, boolean pepMirabaALaDerechaCuandoDisparo) {
+   public void dibujar(Entorno entorno, int altoDeResolucion, boolean pepMirabaALaDerechaCuandoDisparo) {
         Image imagen;
 
         if (pepMirabaALaDerechaCuandoDisparo) {
@@ -48,8 +55,12 @@ public class Disparo {
         return this.y;
     }
 
-    public int getRadio() {
-        return this.radio;
+    public int getAncho() {
+        return this.ancho;
+    }
+    
+    public int getAlto() {
+        return this.alto;
     }
 
     public int getVelocidad() {

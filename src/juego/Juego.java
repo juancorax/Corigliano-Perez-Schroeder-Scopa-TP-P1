@@ -50,7 +50,7 @@ public class Juego extends InterfaceJuego {
 		int separacionVertical = centroY / 3;
 
 		// Variables para el posicionamiento de las tortugas
-		int xTortuga = 0;
+		int numeroDeIsla = 0;
 		int islasElegidas[] = new int[3];
 
 		// Instanciacion del estado del juego
@@ -72,8 +72,6 @@ public class Juego extends InterfaceJuego {
 		this.islasFlotantes[6] = new IslaFlotante(centroX - separacionHorizontal, separacionVertical * 4);
 		this.islasFlotantes[7] = new IslaFlotante(centroX + separacionHorizontal, separacionVertical * 4);
 		this.islasFlotantes[8] = new IslaFlotante(centroX, separacionVertical * 5);
-		System.out.println("Coordenada Y de isla 1: " + separacionVertical * 2);
-		System.out.println("Piso de isla 1: " + ((separacionVertical * 2) - this.islasFlotantes[1].getAlto() / 2));
 
 		// Instanciacion de los Gnomos
 		this.gnomos = new Gnomo[3];
@@ -84,11 +82,12 @@ public class Juego extends InterfaceJuego {
 		this.tortugas = new Tortuga[3];
 		for (int i = 0; i < tortugas.length; i++) {
 			// Elige una isla entre la 0 y la 5 excluyendo la 0 y la 4
-			while (xTortuga == 0 || xTortuga == 4 || xTortuga == islasElegidas[0] || xTortuga == islasElegidas[1]) {
-				xTortuga = (int) Math.floor(Math.random() * 6);
+			while (numeroDeIsla == 0 || numeroDeIsla == 4 || numeroDeIsla == islasElegidas[0]
+					|| numeroDeIsla == islasElegidas[1]) {
+				numeroDeIsla = (int) Math.floor(Math.random() * 6);
 			}
-			islasElegidas[i] = xTortuga;
-			tortugas[i] = new Tortuga(islasFlotantes[islasElegidas[i]].getX(), 0, 25, 25, 0);
+			islasElegidas[i] = numeroDeIsla;
+			tortugas[i] = new Tortuga(islasFlotantes[islasElegidas[i]].getX(), 0, 25, 25, 0, 0);
 		}
 
 		// Instanciacion de Pep
@@ -135,8 +134,7 @@ public class Juego extends InterfaceJuego {
 						anchoDeResolucion / 2, altoDeResolucion / 15, 0, 3);
 			} else {
 				this.entorno.dibujarImagen(Herramientas.cargarImagen("imagenes/casadegnomos.png"),
-						anchoDeResolucion / 2,
-						altoDeResolucion / 15, 0, 3);
+						anchoDeResolucion / 2, altoDeResolucion / 15, 0, 3);
 			}
 
 			// Se reinicia la variable 'algunGnomoNoExiste' despues de medio segundo
@@ -171,7 +169,8 @@ public class Juego extends InterfaceJuego {
 			// y se presiona la tecla/boton correspondiente
 			if (this.disparo == null
 					&& (this.entorno.sePresiono('c') || this.entorno.sePresionoBoton(this.entorno.BOTON_IZQUIERDO))) {
-				this.disparo = new Disparo(this.pep.getX(), this.pep.getY(), this.pep.getAncho() / 4, 5);
+				this.disparo = new Disparo(this.pep.getX(), this.pep.getY(), this.pep.getAncho(), this.pep.getAncho(),
+						5);
 
 				// Si Pep disparo, se guardan la posicion y direccion
 				if (this.disparo != null) {
@@ -183,6 +182,7 @@ public class Juego extends InterfaceJuego {
 			// Si el disparo existe, lo dibuja
 			if (this.disparo != null) {
 				this.disparo.dibujar(this.entorno, this.altoDeResolucion, this.pepMirabaALaDerechaCuandoDisparo);
+				// this.disparo.dibujar(this.entorno);
 
 				// Mueve el disparo dependiendo de la direccion
 				// a la cual Pep miraba
@@ -230,7 +230,7 @@ public class Juego extends InterfaceJuego {
 					gnomos[i].dibujar(this.entorno, altoDeResolucion);
 
 					// Verificar si el gnomo ha sido salvado por Pep
-					if (gnomos[i].estaCercaDePep(this.pep) && gnomos[i].getY() > this.altoDeResolucion / 2) {
+					if (gnomos[i].estaCercaDePep(this.pep) && gnomos[i].getY() > this.altoDeResolucion / 3) {
 						gnomos[i] = null; // Gnomo salvado, eliminarlo del juego
 						this.estadoDelJuego.setGnomosSalvados(this.estadoDelJuego.getGnomosSalvados() + 1); // Sumarlo a
 																											// la
@@ -290,7 +290,6 @@ public class Juego extends InterfaceJuego {
 						tortugas[i].rebotarTortugas(anchoDeResolucion,
 								(anchoDeResolucion / 2) - ((anchoDeResolucion / 2) / 3) - (anchoDeResolucion / 12),
 								(anchoDeResolucion / 2) - ((anchoDeResolucion / 2) / 3) + (anchoDeResolucion / 12));
-						System.out.println("Coordenadas Y de la tortuga " + tortugas[i].getY());
 						if (tortugas[i].getY() == (islasFlotantes[1].getY() - (islasFlotantes[1].getAlto() / 2)) - 12) {
 							tortugas[i].setVelocidad(1);
 						}
@@ -334,17 +333,37 @@ public class Juego extends InterfaceJuego {
 					}
 					// Si un disparo toca a una tortuga:
 					if (disparo != null) {
-						if (disparo.getX() > tortugas[i].getX()
-								&& disparo.getX() < tortugas[i].getX() + tortugas[i].getAncho()
-								&& disparo.getY() > tortugas[i].getY()
-								&& disparo.getY() < tortugas[i].getY() + tortugas[i].getAlto()) {
-							tortugas[i] = null;
+						if (tortugas[i].intersectaConDisparo(disparo)) {
+							this.reposicionarTortuga(tortugas[i]);
 						}
 					}
 				}
 			}
 
 		}
+	}
+
+	private boolean tieneTortuga(IslaFlotante isla, Tortuga[] tortugas) {
+		for (int i = 0; i < tortugas.length; i++) {
+			int inicioIsla = isla.getX() - isla.getAncho() / 2;
+			int finIsla = isla.getX() + isla.getAncho() / 2;
+			if (tortugas[i].getX() >= inicioIsla && tortugas[i].getX() <= finIsla) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private void reposicionarTortuga(Tortuga tortuga) {
+		int islaAleatoria = 0;
+		tortuga.setX(Integer.MAX_VALUE);
+		while (islaAleatoria == 0 || islaAleatoria == 4
+				|| tieneTortuga(this.islasFlotantes[islaAleatoria], this.tortugas)) {
+			islaAleatoria = (int) Math.floor(Math.random() * 6);
+		}
+		tortuga.setX(islasFlotantes[islaAleatoria].getX());
+		tortuga.setY(0);
+		tortuga.setVelocidad(0);
 	}
 
 	public void detectarMovimientosDePep() {
