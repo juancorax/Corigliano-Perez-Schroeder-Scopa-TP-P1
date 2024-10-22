@@ -1,6 +1,6 @@
 package juego;
 
-import java.awt.Color;
+// import java.awt.Color;
 import java.awt.Image;
 
 import entorno.Entorno;
@@ -29,12 +29,15 @@ public class Disparo {
     public void moverALaIzquierda() {
         this.x -= this.velocidad;
     }
-    
-    /*public void dibujar(Entorno entorno) {
-        entorno.dibujarRectangulo(this.x, this.y, this.ancho, this.alto, 0, Color.ORANGE);
-    }*/
 
-   public void dibujar(Entorno entorno, int altoDeResolucion, boolean pepMirabaALaDerechaCuandoDisparo) {
+    /*
+     * public void dibujar(Entorno entorno) {
+     * entorno.dibujarRectangulo(this.x, this.y, this.ancho, this.alto, 0,
+     * Color.ORANGE);
+     * }
+     */
+
+    public void dibujar(Entorno entorno, int altoDeResolucion, boolean pepMirabaALaDerechaCuandoDisparo) {
         Image imagen;
 
         if (pepMirabaALaDerechaCuandoDisparo) {
@@ -58,7 +61,7 @@ public class Disparo {
     public int getAncho() {
         return this.ancho;
     }
-    
+
     public int getAlto() {
         return this.alto;
     }

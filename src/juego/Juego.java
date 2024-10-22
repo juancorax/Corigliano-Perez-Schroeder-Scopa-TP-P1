@@ -335,11 +335,11 @@ public class Juego extends InterfaceJuego {
 					if (disparo != null) {
 						if (tortugas[i].intersectaConDisparo(disparo)) {
 							this.reposicionarTortuga(tortugas[i]);
+							this.estadoDelJuego.setEnemigosEliminados(this.estadoDelJuego.getEnemigosEliminados() + 1);
 						}
 					}
 				}
 			}
-
 		}
 	}
 
