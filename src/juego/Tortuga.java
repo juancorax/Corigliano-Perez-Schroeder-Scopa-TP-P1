@@ -63,6 +63,16 @@ public class Tortuga extends Personaje {
 		this.y = y;
 	}
 
+	public void aplicarGravedad() {
+		this.velocidadDeCaida += gravedad;
+
+		if (this.velocidadDeCaida > 3) {
+			this.velocidadDeCaida = 3;
+		}
+
+		this.y += velocidadDeCaida;
+	}
+
 	public void rebotarTortugas(int centroX, int bordeIzquierdo, int bordeDerecho) {
 
 		// cambiar dirección
