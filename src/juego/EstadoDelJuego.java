@@ -40,9 +40,9 @@ public class EstadoDelJuego {
         this.enemigosEliminados = enemigosEliminados;
     }
 
-    // Convierte los milisegundos a minutos y los devuelve como una cadena
-    public String cadenaDeMinutos(int milisegundos) {
-        int segundos = milisegundos / 1000;
+    // Devuelve la cadena del tiempo restante para que termine el juego
+    public String cadenaDeTiempoRestante(int milisegundos, int limiteDeTiempo) {
+        int segundos = (limiteDeTiempo - milisegundos + 999) / 1000;
         int minutos = segundos / 60;
         int restoDeSegundos = segundos - (60 * minutos);
 
@@ -61,7 +61,7 @@ public class EstadoDelJuego {
         int mitadDePantalla = anchoDeResolucion / 2;
 
         // Muestra los 4 mensajes en pantalla
-        entorno.escribirTexto("Tiempo: " + this.cadenaDeMinutos(entorno.tiempo()), mitadDePantalla / 20,
+        entorno.escribirTexto("Tiempo: " + this.cadenaDeTiempoRestante(entorno.tiempo(), 120000), mitadDePantalla / 20,
                 altoDeResolucion / 15);
         entorno.escribirTexto("Salvados: " + this.gnomosSalvados, mitadDePantalla / 2, altoDeResolucion / 15);
         entorno.escribirTexto("Perdidos: " + this.gnomosPerdidos, mitadDePantalla + (mitadDePantalla / 10),
