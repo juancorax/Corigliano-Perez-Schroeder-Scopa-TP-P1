@@ -1,5 +1,7 @@
 package juego;
 
+import java.awt.Color;
+
 import entorno.Entorno;
 import entorno.Herramientas;
 import entorno.InterfaceJuego;
@@ -34,6 +36,9 @@ public class Juego extends InterfaceJuego {
 	// Variables para determinar que tipo de casa dibujar
 	private boolean algunGnomoNoExiste = false;
 	private int milisegundosHastaAhora;
+
+	// Variable para saber si Pep sigue vivo
+	private boolean pepEstaVivo = true;
 
 	Juego() {
 		// Instancia el objeto entorno
@@ -76,7 +81,8 @@ public class Juego extends InterfaceJuego {
 		// Instanciacion de los Gnomos
 		this.gnomos = new Gnomo[3];
 		for (int i = 0; i < gnomos.length; i++) {
-			gnomos[i] = new Gnomo(anchoDeResolucion / 2, altoDeResolucion / 10, 25, 25, 2);
+			gnomos[i] = new Gnomo(this.anchoDeResolucion / 2, this.altoDeResolucion / 10, this.altoDeResolucion / 20,
+					this.altoDeResolucion / 20, 2);
 		}
 		// Instanciacion de las Tortugas
 		this.tortugas = new Tortuga[3];
@@ -87,11 +93,12 @@ public class Juego extends InterfaceJuego {
 				numeroDeIsla = (int) Math.floor(Math.random() * 6);
 			}
 			islasElegidas[i] = numeroDeIsla;
-			tortugas[i] = new Tortuga(islasFlotantes[islasElegidas[i]].getX(), 0, 25, 25, 0, 0);
+			tortugas[i] = new Tortuga(this.islasFlotantes[islasElegidas[i]].getX(), 0, this.altoDeResolucion / 20,
+					this.altoDeResolucion / 20, 0, 0);
 		}
 
 		// Instanciacion de Pep
-		this.pep = new Pep(centroX, (separacionVertical * 5) - (this.altoDeResolucion / 20), altoDeResolucion / 20,
+		this.pep = new Pep(centroX, (separacionVertical * 5) - (this.altoDeResolucion / 20), this.altoDeResolucion / 20,
 				this.altoDeResolucion / 20, 3);
 
 		// Inicia el juego!
@@ -111,8 +118,37 @@ public class Juego extends InterfaceJuego {
 		this.entorno.dibujarImagen(Herramientas.cargarImagen("imagenes/fondo.png"), anchoDeResolucion / 2,
 				altoDeResolucion / 2, 0, 2);
 
-		// Muestra en pantalla el estado del juego
-		this.estadoDelJuego.mostrarEnPantalla(this.entorno, anchoDeResolucion, altoDeResolucion);
+		// Comprueba si el juego termino,
+		// y si es asi, muestra el mensaje correspondiente
+		if (!(this.pepEstaVivo)) {
+			limpiarPantalla();
+
+			this.entorno.cambiarFont("Comic Sans MS", anchoDeResolucion / 10, Color.RED);
+
+			this.entorno.escribirTexto("Has muerto..", this.anchoDeResolucion / 5, this.altoDeResolucion / 2);
+		} else if (this.entorno.tiempo() >= 120000) {
+			limpiarPantalla();
+
+			this.entorno.cambiarFont("Comic Sans MS", anchoDeResolucion / 10, Color.RED);
+
+			this.entorno.escribirTexto("El tiempo", this.anchoDeResolucion / 5, this.altoDeResolucion / 2);
+			this.entorno.escribirTexto("ha terminado", this.anchoDeResolucion / 5,
+					this.altoDeResolucion / 2 + this.altoDeResolucion / 4);
+		} else if (this.estadoDelJuego.getGnomosPerdidos() >= 10) {
+			limpiarPantalla();
+
+			this.entorno.cambiarFont("Comic Sans MS", anchoDeResolucion / 10, Color.RED);
+
+			this.entorno.escribirTexto("Los gnomos", this.anchoDeResolucion / 5, this.altoDeResolucion / 2);
+			this.entorno.escribirTexto("han muerto", this.anchoDeResolucion / 5,
+					this.altoDeResolucion / 2 + this.altoDeResolucion / 4);
+		} else if (this.estadoDelJuego.getGnomosSalvados() >= 10) {
+			limpiarPantalla();
+
+			this.entorno.cambiarFont("Comic Sans MS", anchoDeResolucion / 10, Color.DARK_GRAY);
+
+			this.entorno.escribirTexto("Has ganado !", this.anchoDeResolucion / 5, this.altoDeResolucion / 2);
+		}
 
 		// Comprueba si los gnomos existen
 		if (this.gnomos != null) {
@@ -127,6 +163,9 @@ public class Juego extends InterfaceJuego {
 		}
 
 		if (this.pep != null) {
+			// Muestra en pantalla el estado del juego
+			this.estadoDelJuego.mostrarEnPantalla(this.entorno, anchoDeResolucion, altoDeResolucion);
+
 			// Si algun gnomo no existe, se dibuja la casa con la puerta abierta.
 			// En caso contrario, se dibuja la casa normal
 			if (this.algunGnomoNoExiste) {
@@ -207,10 +246,7 @@ public class Juego extends InterfaceJuego {
 			// Comprueba si Pep se cayo al vacio
 			// y elimina todo en caso de ser asi
 			if (this.pep.getY() - (this.pep.getAlto() / 2) > this.altoDeResolucion) {
-				this.pep = null;
-				this.islasFlotantes = null;
-				this.gnomos = null;
-				this.tortugas = null;
+				this.pepEstaVivo = false;
 			}
 		}
 
@@ -290,7 +326,8 @@ public class Juego extends InterfaceJuego {
 						tortugas[i].rebotarTortugas(anchoDeResolucion,
 								(anchoDeResolucion / 2) - ((anchoDeResolucion / 2) / 3) - (anchoDeResolucion / 12),
 								(anchoDeResolucion / 2) - ((anchoDeResolucion / 2) / 3) + (anchoDeResolucion / 12));
-						if (tortugas[i].getY() == (islasFlotantes[1].getY() - (islasFlotantes[1].getAlto() / 2)) - 12) {
+						if (tortugas[i].getY() + (tortugas[i].getAlto() / 2) == islasFlotantes[1].getY()
+								- (islasFlotantes[1].getAlto() / 2)) {
 							tortugas[i].setVelocidad(1);
 						}
 
@@ -301,7 +338,8 @@ public class Juego extends InterfaceJuego {
 						tortugas[i].rebotarTortugas(anchoDeResolucion,
 								(anchoDeResolucion / 2) + ((anchoDeResolucion / 2) / 3) - (anchoDeResolucion / 12),
 								(anchoDeResolucion / 2) + ((anchoDeResolucion / 2) / 3) + (anchoDeResolucion / 12));
-						if (tortugas[i].getY() == (islasFlotantes[2].getY() - (islasFlotantes[1].getAlto() / 2)) - 12) {
+						if (tortugas[i].getY() + (tortugas[i].getAlto() / 2) == islasFlotantes[2].getY()
+								- (islasFlotantes[1].getAlto() / 2)) {
 							tortugas[i].setVelocidad(1);
 						}
 
@@ -312,7 +350,8 @@ public class Juego extends InterfaceJuego {
 										- (anchoDeResolucion / 12),
 								((anchoDeResolucion / 2) - ((anchoDeResolucion / 2) / 3) * 2)
 										+ (anchoDeResolucion / 12));
-						if (tortugas[i].getY() == (islasFlotantes[3].getY() - (islasFlotantes[1].getAlto() / 2)) - 12) {
+						if (tortugas[i].getY() + (tortugas[i].getAlto() / 2) == islasFlotantes[3].getY()
+								- (islasFlotantes[1].getAlto() / 2)) {
 							tortugas[i].setVelocidad(1);
 						}
 
@@ -323,13 +362,14 @@ public class Juego extends InterfaceJuego {
 										- (anchoDeResolucion / 12),
 								((anchoDeResolucion / 2) + ((anchoDeResolucion / 2) / 3) * 2)
 										+ (anchoDeResolucion / 12));
-						if (tortugas[i].getY() == (islasFlotantes[5].getY() - (islasFlotantes[1].getAlto() / 2)) - 12) {
+						if (tortugas[i].getY() + (tortugas[i].getAlto() / 2) == islasFlotantes[5].getY()
+								- (islasFlotantes[1].getAlto() / 2)) {
 							tortugas[i].setVelocidad(1);
 						}
 					}
 					// Si la tortuga choca con Pep:
 					if (tortugas[i].estaCercaDePep(this.pep)) {
-						this.pep.y = this.altoDeResolucion + 100;
+						this.pepEstaVivo = false;
 					}
 					// Si un disparo toca a una tortuga:
 					if (disparo != null) {
@@ -364,6 +404,13 @@ public class Juego extends InterfaceJuego {
 		tortuga.setX(islasFlotantes[islaAleatoria].getX());
 		tortuga.setY(0);
 		tortuga.setVelocidad(0);
+	}
+
+	public void limpiarPantalla() {
+		this.pep = null;
+		this.islasFlotantes = null;
+		this.gnomos = null;
+		this.tortugas = null;
 	}
 
 	public void detectarMovimientosDePep() {
