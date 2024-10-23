@@ -44,6 +44,10 @@ public class Personaje {
     public int getVelocidad() {
         return velocidad;
     }
+    
+    public void setVelocidadDeCaida(int velocidadDeCaida) {
+    	this.velocidadDeCaida=velocidadDeCaida;
+    }
 
     public void aplicarGravedad() {
         this.velocidadDeCaida += gravedad;

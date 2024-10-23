@@ -31,6 +31,17 @@ public class IslaFlotante {
         this.ancho = anchoDeClase;
         this.alto = altoDeClase;
     }
+    
+    boolean tieneTortuga(Tortuga[] tortugas) {
+		for (int i = 0; i < tortugas.length; i++) {
+			int inicioIsla = getX() - getAncho() / 2;
+			int finIsla = getX() + getAncho() / 2;
+			if (tortugas[i] != null && tortugas[i].getX() >= inicioIsla && tortugas[i].getX() <= finIsla) {
+				return true;
+			}
+		}
+		return false;
+	}
 
     public void dibujar(Entorno entorno, int altoDeResolucion) {
         Image imagen = Herramientas.cargarImagen("imagenes/isla.png");

@@ -26,6 +26,7 @@ public class Tortuga extends Personaje {
 		super(x, y, ancho, alto, velocidad);
 		this.direccionX = (Math.random() < 0.5) ? -1 : 1;
 		this.isla = isla;
+		this.velocidadDeCaida=4;
 
 		// Almacena cada frame de animacion dentro de los arrays
 		for (int i = 0; i < caminarALaDerecha.length; i++) {
@@ -64,12 +65,6 @@ public class Tortuga extends Personaje {
 	}
 
 	public void aplicarGravedad() {
-		this.velocidadDeCaida += gravedad;
-
-		if (this.velocidadDeCaida > 3) {
-			this.velocidadDeCaida = 3;
-		}
-
 		this.y += velocidadDeCaida;
 	}
 
@@ -123,6 +118,8 @@ public class Tortuga extends Personaje {
 		return (xMin1 < xMax2 && xMax1 > xMin2 &&
 				yMin1 < yMax2 && yMax1 > yMin2);
 	}
+	
+	
 
 	public void dibujar(Entorno entorno, int altoDeResolucion) {
 		Image imagen;

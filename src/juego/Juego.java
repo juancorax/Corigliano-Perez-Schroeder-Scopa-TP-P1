@@ -1,6 +1,9 @@
 package juego;
 
 import java.awt.Color;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import entorno.Entorno;
 import entorno.Herramientas;
@@ -374,7 +377,8 @@ public class Juego extends InterfaceJuego {
 					// Si un disparo toca a una tortuga:
 					if (disparo != null) {
 						if (tortugas[i].intersectaConDisparo(disparo)) {
-							this.reposicionarTortuga(tortugas[i]);
+							tortugas[i] = null;
+							tortugas[i] = this.crearNuevaTortuga();
 							this.estadoDelJuego.setEnemigosEliminados(this.estadoDelJuego.getEnemigosEliminados() + 1);
 						}
 					}
@@ -383,27 +387,17 @@ public class Juego extends InterfaceJuego {
 		}
 	}
 
-	private boolean tieneTortuga(IslaFlotante isla, Tortuga[] tortugas) {
-		for (int i = 0; i < tortugas.length; i++) {
-			int inicioIsla = isla.getX() - isla.getAncho() / 2;
-			int finIsla = isla.getX() + isla.getAncho() / 2;
-			if (tortugas[i].getX() >= inicioIsla && tortugas[i].getX() <= finIsla) {
-				return true;
-			}
-		}
-		return false;
-	}
 
-	private void reposicionarTortuga(Tortuga tortuga) {
-		int islaAleatoria = 0;
-		tortuga.setX(Integer.MAX_VALUE);
-		while (islaAleatoria == 0 || islaAleatoria == 4
-				|| tieneTortuga(this.islasFlotantes[islaAleatoria], this.tortugas)) {
+	private Tortuga crearNuevaTortuga() {
+	    int islaAleatoria = 0;
+		while (islaAleatoria == 0 || islaAleatoria == 4 || this.islasFlotantes[islaAleatoria].tieneTortuga(this.tortugas)) {
 			islaAleatoria = (int) Math.floor(Math.random() * 6);
 		}
-		tortuga.setX(islasFlotantes[islaAleatoria].getX());
-		tortuga.setY(0);
-		tortuga.setVelocidad(0);
+		Tortuga nuevaTortuga = new Tortuga(islasFlotantes[islaAleatoria].getX(), 0, this.altoDeResolucion / 20,
+					this.altoDeResolucion / 20,0,islaAleatoria);
+		nuevaTortuga.setVelocidadDeCaida(2);
+	    return nuevaTortuga;
+	    
 	}
 
 	public void limpiarPantalla() {
