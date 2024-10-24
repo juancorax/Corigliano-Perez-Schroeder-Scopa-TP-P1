@@ -70,11 +70,6 @@ public class Nave {
 
                 // Restablecer al valor por defecto para poder volver a saltar
                 pep.enElAire = false;
-
-            } else if (solapamientoMinimo == solapamientoAbajo) {
-                // Colision desde abajo
-                pep.y = naveAbajo + (pep.alto / 2);
-
             }
         }
     }
