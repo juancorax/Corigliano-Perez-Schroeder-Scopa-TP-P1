@@ -1,10 +1,6 @@
 package juego;
 
 import java.awt.Color;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
 import entorno.Entorno;
 import entorno.Herramientas;
 import entorno.InterfaceJuego;
@@ -22,6 +18,7 @@ public class Juego extends InterfaceJuego {
 	private Disparo disparo;
 	private Gnomo[] gnomos;
 	private Tortuga[] tortugas;
+	private Nave nave;
 
 	// Resolucion del juego
 	private int anchoDeResolucion = 1280;
@@ -103,6 +100,11 @@ public class Juego extends InterfaceJuego {
 		// Instanciacion de Pep
 		this.pep = new Pep(centroX, (separacionVertical * 5) - (this.altoDeResolucion / 20), this.altoDeResolucion / 20,
 				this.altoDeResolucion / 20, 3);
+
+		// Instanciacion de la Nave
+		this.nave = new Nave(centroX, (separacionVertical * 6) - (this.altoDeResolucion / 20),
+				this.altoDeResolucion / 6,
+				this.altoDeResolucion / 20);
 
 		// Inicia el juego!
 		this.entorno.iniciar();
@@ -385,19 +387,28 @@ public class Juego extends InterfaceJuego {
 				}
 			}
 		}
+
+		// Comprueba si pep existe
+		if (this.pep != null) {
+			int mouseX = entorno.mouseX();
+			// Llama al metodo que mueve la nave con el cursor
+			nave.moverConCursor(mouseX);
+			nave.dibujar(entorno);
+			nave.colisionConNave(pep);
+		}
 	}
 
-
 	private Tortuga crearNuevaTortuga() {
-	    int islaAleatoria = 0;
-		while (islaAleatoria == 0 || islaAleatoria == 4 || this.islasFlotantes[islaAleatoria].tieneTortuga(this.tortugas)) {
+		int islaAleatoria = 0;
+		while (islaAleatoria == 0 || islaAleatoria == 4
+				|| this.islasFlotantes[islaAleatoria].tieneTortuga(this.tortugas)) {
 			islaAleatoria = (int) Math.floor(Math.random() * 6);
 		}
 		Tortuga nuevaTortuga = new Tortuga(islasFlotantes[islaAleatoria].getX(), 0, this.altoDeResolucion / 20,
-					this.altoDeResolucion / 20,0,islaAleatoria);
+				this.altoDeResolucion / 20, 0, islaAleatoria);
 		nuevaTortuga.setVelocidadDeCaida(2);
-	    return nuevaTortuga;
-	    
+		return nuevaTortuga;
+
 	}
 
 	public void limpiarPantalla() {

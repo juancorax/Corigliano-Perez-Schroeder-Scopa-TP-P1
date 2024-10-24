@@ -115,4 +115,8 @@ public class Personaje {
             }
         }
     }
+
+    public void setY(int y) {
+        this.y = y;
+    }
 }

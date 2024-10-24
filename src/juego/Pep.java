@@ -102,4 +102,8 @@ public class Pep extends Personaje {
     public boolean getMiraAlaDerecha() {
         return this.miraALaDerecha;
     }
+
+    public void setY(int y) {
+        this.y = y;
+    }
 }
