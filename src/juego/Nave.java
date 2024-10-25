@@ -27,8 +27,9 @@ public class Nave {
         this.x = mouseX;
     }
 
-    // Metodo para comprobar si hay colisión entre la nave y Pep
-    public void colisionConNave(Pep pep) {
+    // Metodo para comprobar si hay colisión entre la nave y Pep,
+    // o entre la nave y los gnomos
+    public void colisionConNave(Pep pep, Gnomo[] gnomos) {
         int naveIzquierda = this.getX() - (this.getAncho() / 2);
         int naveDerecha = this.getX() + (this.getAncho() / 2);
         int naveArriba = this.getY() - (this.getAlto() / 2);
@@ -39,7 +40,7 @@ public class Nave {
         int pepArriba = pep.getY() - (pep.getAlto() / 2);
         int pepAbajo = pep.getY() + (pep.getAlto() / 2);
 
-        // Comprobar si hay colision
+        // Comprobar si hay colision con Pep
         if (pepDerecha > naveIzquierda && pepIzquierda < naveDerecha &&
                 pepAbajo > naveArriba && pepArriba < naveAbajo) {
 
@@ -55,21 +56,65 @@ public class Nave {
 
             if (solapamientoMinimo == solapamientoIzquierda) {
                 // Colision desde la izquierda
-                pep.x = naveIzquierda - (pep.ancho / 2);
+                pep.x = naveIzquierda - (this.ancho / 2);
 
             } else if (solapamientoMinimo == solapamientoDerecha) {
                 // Colision desde la derecha
-                pep.x = naveDerecha + (pep.ancho / 2);
+                pep.x = naveDerecha + (this.ancho / 2);
 
             } else if (solapamientoMinimo == solapamientoArriba) {
                 // Colision desde arriba
-                pep.y = naveArriba - (pep.alto / 2);
+                pep.y = naveArriba - (this.alto / 2);
 
                 // Reiniciar la velocidad de caida debido a la colision
                 pep.velocidadDeCaida = 0;
 
                 // Restablecer al valor por defecto para poder volver a saltar
                 pep.enElAire = false;
+            }
+        }
+
+        for (Gnomo gnomo : gnomos) {
+            if (gnomo != null) {
+                int gnomoIzquierda = gnomo.getX() - (gnomo.getAncho() / 2);
+                int gnomoDerecha = gnomo.getX() + (gnomo.getAncho() / 2);
+                int gnomoArriba = gnomo.getY() - (gnomo.getAlto() / 2);
+                int gnomoAbajo = gnomo.getY() + (gnomo.getAlto() / 2);
+
+                // Comprobar si hay colision con gnomo
+                if (gnomoDerecha > naveIzquierda && gnomoIzquierda < naveDerecha &&
+                        gnomoAbajo > naveArriba && gnomoArriba < naveAbajo) {
+
+                    // Calcular cada solapamiento
+                    int solapamientoIzquierda = gnomoDerecha - naveIzquierda;
+                    int solapamientoDerecha = naveDerecha - gnomoIzquierda;
+                    int solapamientoArriba = gnomoAbajo - naveArriba;
+                    int solapamientoAbajo = naveAbajo - gnomoArriba;
+
+                    // Encontrar el menor solapamiento
+                    int solapamientoMinimo = Math.min(Math.min(solapamientoIzquierda, solapamientoDerecha),
+                            Math.min(solapamientoArriba, solapamientoAbajo));
+
+                    if (solapamientoMinimo == solapamientoIzquierda) {
+                        // Colision desde la izquierda
+                        gnomo.x = naveIzquierda - (this.ancho / 2);
+
+                        break;
+                    } else if (solapamientoMinimo == solapamientoDerecha) {
+                        // Colision desde la derecha
+                        gnomo.x = naveDerecha + (this.ancho / 2);
+
+                        break;
+                    } else if (solapamientoMinimo == solapamientoArriba) {
+                        // Colision desde arriba
+                        gnomo.y = naveArriba - (this.alto / 2);
+
+                        // Reiniciar la velocidad de caida debido a la colision
+                        gnomo.velocidadDeCaida = 0;
+
+                        break;
+                    }
+                }
             }
         }
     }

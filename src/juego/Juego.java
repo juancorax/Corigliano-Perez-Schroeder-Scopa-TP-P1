@@ -257,7 +257,8 @@ public class Juego extends InterfaceJuego {
 			for (int i = 0; i < gnomos.length; i++) {
 				if (gnomos[i] == null) {
 					// Crear un nuevo gnomo si el actual es null
-					gnomos[i] = new Gnomo(anchoDeResolucion / 2, altoDeResolucion / 10, 25, 25, 2);
+					gnomos[i] = new Gnomo(this.anchoDeResolucion / 2, this.altoDeResolucion / 10,
+							this.altoDeResolucion / 20, this.altoDeResolucion / 20, 2);
 					continue; // Saltar a la siguiente iteración después de crear el nuevo gnomo
 				}
 				if (gnomos[i] != null) {
@@ -314,6 +315,7 @@ public class Juego extends InterfaceJuego {
 				}
 			}
 		}
+
 		// Tortugas
 		if (this.tortugas != null) {
 			for (int i = 0; i < tortugas.length; i++) {
@@ -386,12 +388,12 @@ public class Juego extends InterfaceJuego {
 		}
 
 		// Comprueba si pep existe
-		if (this.pep != null) {
-			int mouseX = entorno.mouseX();
+		if (this.pep != null && this.gnomos != null) {
+			int mouseX = this.entorno.mouseX();
 			// Llama al metodo que mueve la nave con el cursor
-			nave.moverConCursor(mouseX);
-			nave.dibujar(entorno);
-			nave.colisionConNave(pep);
+			this.nave.moverConCursor(mouseX);
+			this.nave.dibujar(this.entorno);
+			this.nave.colisionConNave(this.pep, this.gnomos);
 		}
 	}
 
