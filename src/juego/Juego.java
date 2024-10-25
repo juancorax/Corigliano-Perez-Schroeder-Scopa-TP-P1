@@ -387,12 +387,21 @@ public class Juego extends InterfaceJuego {
 			}
 		}
 
-		// Comprueba si pep existe
+		// Comprueba si pep y los gnomos existen
 		if (this.pep != null && this.gnomos != null) {
+
+			// X actual del mouse
 			int mouseX = this.entorno.mouseX();
-			// Llama al metodo que mueve la nave con el cursor
-			this.nave.moverConCursor(mouseX);
+
+			// Manteniendo presionado el boton derecho del mouse,
+			// se puede mover la nave hacia los lados
+			if (this.entorno.estaPresionado(this.entorno.BOTON_DERECHO)) {
+				this.nave.moverConCursor(mouseX);
+			}
+
 			this.nave.dibujar(this.entorno);
+
+			// Permite que Pep y los gnomos se paren sobre la nave
 			this.nave.colisionConNave(this.pep, this.gnomos);
 		}
 	}
