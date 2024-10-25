@@ -125,34 +125,31 @@ public class Juego extends InterfaceJuego {
 
 		// Comprueba si el juego termino,
 		// y si es asi, muestra el mensaje correspondiente
-		if (!(this.pepEstaVivo)) {
+		if (!(this.pepEstaVivo)) { // Si Pep cae al vacio o toca una tortuga
 			limpiarPantalla();
 
 			this.entorno.cambiarFont("Comic Sans MS", anchoDeResolucion / 10, Color.RED);
 
-			this.entorno.escribirTexto("Has muerto..", this.anchoDeResolucion / 5, this.altoDeResolucion / 2);
-		} else if (this.entorno.tiempo() >= 120000) {
+			this.entorno.escribirTexto("Has muerto...", this.anchoDeResolucion / 5, this.altoDeResolucion / 2);
+
+		} else if (this.entorno.tiempo() >= 120000) { // Si se acaba el tiempo
 			limpiarPantalla();
 
 			this.entorno.cambiarFont("Comic Sans MS", anchoDeResolucion / 10, Color.RED);
 
-			this.entorno.escribirTexto("El tiempo", this.anchoDeResolucion / 5, this.altoDeResolucion / 2);
-			this.entorno.escribirTexto("ha terminado", this.anchoDeResolucion / 5,
-					this.altoDeResolucion / 2 + this.altoDeResolucion / 4);
-		} else if (this.estadoDelJuego.getGnomosPerdidos() >= 10) {
+			this.entorno.escribirTexto("Tiempo terminado", this.anchoDeResolucion / 14, this.altoDeResolucion / 2);
+		} else if (this.estadoDelJuego.getGnomosPerdidos() >= 20) { // Si muere cierta cantidad de gnomos
 			limpiarPantalla();
 
 			this.entorno.cambiarFont("Comic Sans MS", anchoDeResolucion / 10, Color.RED);
 
-			this.entorno.escribirTexto("Los gnomos", this.anchoDeResolucion / 5, this.altoDeResolucion / 2);
-			this.entorno.escribirTexto("han muerto", this.anchoDeResolucion / 5,
-					this.altoDeResolucion / 2 + this.altoDeResolucion / 4);
-		} else if (this.estadoDelJuego.getGnomosSalvados() >= 10) {
+			this.entorno.escribirTexto("Gnomos aniquilados", this.anchoDeResolucion / 14, this.altoDeResolucion / 2);
+		} else if (this.estadoDelJuego.getGnomosSalvados() >= 10) { // Si se rescata cierta cantidad de gnomos
 			limpiarPantalla();
 
 			this.entorno.cambiarFont("Comic Sans MS", anchoDeResolucion / 10, Color.DARK_GRAY);
 
-			this.entorno.escribirTexto("Has ganado !", this.anchoDeResolucion / 5, this.altoDeResolucion / 2);
+			this.entorno.escribirTexto("¡ Has ganado !", this.anchoDeResolucion / 6, this.altoDeResolucion / 2);
 		}
 
 		// Comprueba si los gnomos existen
